@@ -1,25 +1,25 @@
-var contacts = [
-  { "name": "Shivani","email": "shivani@gmail.com", "mobile": "9999911111"},
-  { "name": "Prajna", "email": "prajna@gmail.com", "mobile": "9999922222"},
-  { "name": "Navya", "email": "navya@gmail.com", "mobile": "9999933333"},
-  { "name": "Riya", "email": "riya@gmail.com", "mobile": "999994444"}
-];
+if(localStorage.getItem("contacts")==null)
+    localStorage.setItem("contacts",JSON.stringify([]));
 
-viewData();
 var tempIndex = -1;
+viewData();
 function addContact(){
-   contact=getContact();
-    contacts.push(contact);
-   var cname = document.getElementById("cname").value='';
-   var email = document.getElementById("email").value='';
-   var mobile=document.getElementById("mobile").value='';
+  var contact = getContact();
+ var contacts = getDataFromLocalStorage();
+  contacts.push(contact);
+  updateDataToLocalStorage(contacts);
+  clearFormData();
     viewData();
     
     
 }
 function viewData(){
+    var contacts = getDataFromLocalStorage();
     var data = "";
-    data += "<table>"
+  if(contacts.length==0){
+      data = "Contacts not yet added..."
+  }else{
+    data += "<table id = 'contacts'>"
     for (var i = 0; i < contacts.length; i++){
         data += "<tr>";
         data += "<td>" + contacts[i].name + "</td>";
@@ -30,9 +30,11 @@ function viewData(){
         data += "</tr>";
     }
     data += "</table>";
+  }
     document.getElementById("content").innerHTML = data;
 }
 function editContact(index){
+    var contacts = getDataFromLocalStorage(); 
    contact = contacts[index];
     tempIndex=index;
     document.getElementById('cname').value=contact.name;
@@ -43,15 +45,17 @@ function editContact(index){
  
 }
 function deleteContact(index){
+    var contacts = getDataFromLocalStorage();
     contacts.splice(index,1);
+    updateDataToLocalStorage(contacts);
     viewData();
 }
 function updateContact(){
+    var contacts = getDataFromLocalStorage();
     contact = getContact();
     contacts.splice(tempIndex,1,contact);
-    document.getElementById('cname').value="";
-    document.getElementById('email').value="";
-    document.getElementById('mobile').value="";
+    updateDataToLocalStorage(contacts);
+   clearFormData();
     document.getElementById("add").style.display="block";
     document.getElementById("update").style.display="none";
     viewData();
@@ -63,7 +67,18 @@ function getContact(){
   contact={"name":cname,"email":email,"mobile":mobile};
 return contact;
 }
-
+function getDataFromLocalStorage(){
+    var contacts = JSON.parse(localStorage.getItem("contacts"));
+    return contacts;
+}
+function updateDataToLocalStorage(updatedData){
+    localStorage.setItem("contacts",JSON.stringify(updatedData));
+}
+function clearFormData(){
+ var cname = document.getElementById("cname").value='';
+   var email = document.getElementById("email").value='';
+   var mobile=document.getElementById("mobile").value='';
+}
 
 
 
